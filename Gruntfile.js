@@ -22,13 +22,37 @@ module.exports = function(grunt) {
         			]
     			}
     		}
-    	}
+    	},
+        clean : {
+            dist: 'dist/'
+        },
+        copy : {
+            main : {
+                expand: true,
+                cwd: 'src/',
+                src: ['jquery.mask.js'],
+                dest: 'dist/'
+            }
+        },
+        uglify : {
+			options : {
+				report: 'min'
+			},
+			dist : {
+				src : 'src/jquery.mask.js',
+				dest : 'dist/jquery.mask.min.js'
+			}
+		}
 	});
 
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-clean');
   
   // A convenient task alias.
   grunt.registerTask('test', ['connect', 'qunit']);
+grunt.registerTask('default', ['clean', 'copy', 'uglify'])
    
 };

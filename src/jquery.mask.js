@@ -54,6 +54,7 @@
 
         var p = {
             invalid: [],
+            isMasked: false,
             getCaret: function () {
                 try {
                     var sel,
@@ -200,11 +201,21 @@
                         currValL = currVal.length,
                         changeCaret = caretPos < currValL,
                         newVal = p.getMasked(),
+                        cleanVal = p.getMasked(true),
+                        cleanValL = cleanVal.length,
                         newValL = newVal.length,
                         maskDif = p.getMCharsBeforeCount(newValL - 1) - p.getMCharsBeforeCount(currValL - 1);
-
-                    p.val(newVal);
-
+                    
+                    if(options.unmaskLongValues && p.isMasked && currValL > newValL) {
+                        p.val(cleanVal + currVal.substring(newValL));
+                        p.isMasked = false;
+                    } else if (options.unmaskLongValues && !p.isMasked && currValL > cleanValL) {
+                        p.val(cleanVal + currVal.substring(cleanValL));
+                    } else {
+                        p.val(newVal);
+                        p.isMasked = true;
+                    }
+                    
                     // change caret but avoid CTRL+A
                     if (changeCaret && !(keyCode === 65 && e.ctrlKey)) {
                         // Avoid adjusting caret on backspace or delete

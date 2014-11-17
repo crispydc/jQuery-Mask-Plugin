@@ -54,6 +54,7 @@
 
         var p = {
             invalid: [],
+            isMasked: false,
             getCaret: function () {
                 try {
                     var sel,
@@ -63,7 +64,7 @@
                         cSelStart = ctrl.selectionStart;
 
                     // IE Support
-                    if (dSel && !~navigator.appVersion.indexOf("MSIE 10")) {
+                    if (dSel && navigator.appVersion.indexOf("MSIE 10") === -1) {
                         sel = dSel.createRange();
                         sel.moveStart('character', el.is("input") ? -el.val().length : -el.text().length);
                         pos = sel.text.length;
@@ -200,11 +201,21 @@
                         currValL = currVal.length,
                         changeCaret = caretPos < currValL,
                         newVal = p.getMasked(),
+                        cleanVal = p.getMasked(true),
+                        cleanValL = cleanVal.length,
                         newValL = newVal.length,
                         maskDif = p.getMCharsBeforeCount(newValL - 1) - p.getMCharsBeforeCount(currValL - 1);
-
-                    p.val(newVal);
-
+                    
+                    if(options.unmaskLongValues && p.isMasked && currValL > newValL) {
+                        p.val(cleanVal + currVal.substring(newValL));
+                        p.isMasked = false;
+                    } else if (options.unmaskLongValues && !p.isMasked && currValL > cleanValL) {
+                        p.val(cleanVal + currVal.substring(cleanValL));
+                    } else {
+                        p.val(newVal);
+                        p.isMasked = true;
+                    }
+                    
                     // change caret but avoid CTRL+A
                     if (changeCaret && !(keyCode === 65 && e.ctrlKey)) {
                         // Avoid adjusting caret on backspace or delete
@@ -346,6 +357,9 @@
                     el.attr('placeholder' , options.placeholder);
                 }
                 
+                // autocomplete needs to be off. we can't intercept events
+                // the browser doesn't  fire any kind of event when something is 
+                // selected in a autocomplete list so we can't sanitize it.
                 el.attr('autocomplete', 'off');
                 p.destroyEvents();
                 p.events();
@@ -445,7 +459,7 @@
     };
 
     $.jMaskGlobals = $.jMaskGlobals || {};
-    globals = $.jMaskGlobals = $.extend(true, {}, globals, $.jMaskGlobals)
+    globals = $.jMaskGlobals = $.extend(true, {}, globals, $.jMaskGlobals);
     
     // looking for inputs with data-mask attribute
     if (globals.dataMask) {            
