@@ -1,0 +1,23 @@
+<html>
+<head>
+  <title>jQuery-Mask-Plugin Testing</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+  <input class="simple-field" type="text" />
+    <p class="clean-val"></p>
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="../src/jquery.mask.js"></script>
+    
+    <script type="text/javascript">
+        $(function() {
+            $('.simple-field').mask('(999) 999-9999', {unmaskLongValues: true});
+            $('.simple-field').on('keyup', function() {
+                $('.clean-val').text($('.simple-field').cleanVal());
+            });
+        });
+    </script>
+</body>
+</html>
