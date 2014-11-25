@@ -365,7 +365,20 @@
                 p.events();
 
                 var caret = p.getCaret();
-                p.val(p.getMasked());
+                
+                var currVal = p.val(),
+                    currValL = currVal.length,
+                    newVal = p.getMasked(),
+                    newValL = newVal.length;
+                    
+                if(options.unmaskLongValues && currValL > newValL) {
+                    //don't change long value
+                    p.isMasked = false;
+                } else {
+                    p.val(newVal);
+                    p.isMasked = true;
+                }
+                
                 p.setCaret(caret + p.getMCharsBeforeCount(caret, true));
 
             } else {

@@ -13,7 +13,7 @@
     
     <script type="text/javascript">
         $(function() {
-            $('.simple-field').mask('(999) 999-9999', {unmaskLongValues: true});
+            $('.simple-field').val('123456789123456789').mask('(999) 999-9999', {unmaskLongValues: true});
             $('.simple-field').on('keyup', function() {
                 $('.clean-val').text($('.simple-field').cleanVal());
             });
